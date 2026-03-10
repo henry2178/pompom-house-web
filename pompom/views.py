@@ -13,8 +13,9 @@ from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.urls import reverse
+import os
 
-stripe.api_key = "sk_test_this_is_a_fake_key_for_github_security"
+stripe.api_key = os.environ.get('STRIPE_API_KEY', 'sk_test_fake_key_for_local_dev')
 
 def register_view(request):
     if request.method == 'POST':
