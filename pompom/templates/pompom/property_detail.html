@@ -1,0 +1,166 @@
+{% extends 'pompom/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="detail-page-wrapper">
+
+    <nav aria-label="breadcrumb" class="detail-breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}" class="breadcrumb-link">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ property.title }}</li>
+        </ol>
+    </nav>
+
+    <div class="detail-layout">
+
+        <div class="detail-main-content">
+
+            <div class="hero-image-wrapper">
+                {% if property.photo %}
+                    <img src="{{ property.photo.url }}" alt="{{ property.title }}" class="detail-hero-img">
+                {% else %}
+                    <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?q=80&w=2070&auto=format&fit=crop" alt="Default" class="detail-hero-img">
+                {% endif %}
+            </div>
+
+            <h1 class="detail-main-title">{{ property.title }}</h1>
+            <p class="detail-address-text">📍 {{ property.address }}</p>
+
+            <div class="detail-amenities-row">
+                <div class="amenity-box">
+                    <div class="amenity-icon">🛏️</div>
+                    <div class="amenity-text">{{ property.bed_type }}</div>
+                </div>
+                <div class="amenity-box">
+                    <div class="amenity-icon">🛁</div>
+                    <div class="amenity-text">{{ property.bathroom_type }}</div>
+                </div>
+                <div class="amenity-box">
+                    <div class="amenity-icon">⭐</div>
+                    <div class="amenity-text">{{ property.rating }} / 5</div>
+                </div>
+            </div>
+
+            <h3 class="detail-section-title">About this property</h3>
+
+            <div class="detail-map-section">
+                <h4 class="detail-sub-title">📍 Location</h4>
+                <p class="detail-text-muted">{{ property.address }}</p>
+
+                <div class="map-iframe-container">
+                    <iframe
+                        allowfullscreen
+                        referrerpolicy="no-referrer-when-downgrade"
+                        src="https://www.google.com/maps/embed/v1/place?key=YOUR_GOOGLE_MAPS_API_KEY&q={{ property.address|urlencode }}">
+                    </iframe>
+                </div>
+            </div>
+
+            <div class="detail-desc-section">
+                <h4 class="detail-sub-title">📝 Description</h4>
+                <p class="detail-paragraph">{{ property.description }}</p>
+            </div>
+
+        </div>
+
+        <div class="detail-sidebar">
+            <div class="booking-price-card">
+
+                <div class="price-card-header">
+                    <div>
+                        <span class="price-huge-text">£{{ property.price }}</span>
+                        <span class="price-sub-text">/week</span>
+                    </div>
+                    <div class="rating-review-text">
+                        ⭐ {{ property.rating }}<br>
+                        <span class="review-underline">{{ property.review_count }} reviews</span>
+                    </div>
+                </div>
+
+                <div class="landlord-info-section">
+                    <h6 class="landlord-label">Listed by Landlord:</h6>
+                    <div class="landlord-profile-box">
+                        <div class="landlord-avatar">👤</div>
+                        <div>
+                            <div class="landlord-name">{{ property.landlord.first_name }} {{ property.landlord.last_name|default:property.landlord.username }}</div>
+                            <div class="landlord-verified">Verified Host ✓</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="booking-action-section">
+                    <h6 class="booking-label">Ready to rent?</h6>
+
+                    <form action="{% url 'create_booking' property.id %}" method="POST">
+                        {% csrf_token %}
+                        <div class="lease-input-group">
+                            <label class="lease-label">Lease Duration (Weeks)</label>
+                            <input type="number" name="weeks" id="weeksInput" class="custom-week-input" value="1" min="1" max="52" required data-weekly-price="{{ property.price }}">
+                        </div>
+
+                        <div class="total-price-box">
+                            <span class="total-label">Total Price:</span>
+                            <span class="total-amount">£<span id="totalPrice">{{ property.price }}</span></span>
+                        </div>
+
+                        {% if user.is_authenticated %}
+                            <button type="submit" class="request-book-btn">
+                                Request to Book
+                            </button>
+                        {% else %}
+                            <a href="{% url 'login' %}" class="login-to-book-btn">
+                                Login to Book
+                            </a>
+                        {% endif %}
+                    </form>
+                </div>
+
+                <button type="button" class="contact-landlord-btn" data-bs-toggle="modal" data-bs-target="#contactModal">
+                    Contact Landlord
+                </button>
+
+                <form action="{% url 'toggle_favorite' property.id %}" method="POST" class="favorite-form" id="favoriteForm">
+                    {% csrf_token %}
+                    <button type="submit" class="toggle-fav-btn" id="favoriteBtn">
+                        {% if user.is_authenticated and user in property.favorites.all %}
+                            Remove from Favorites ♥
+                        {% else %}
+                            Save to Favorites ♡
+                        {% endif %}
+                    </button>
+                </form>
+
+                <p class="no-charge-notice">You won't be charged yet.</p>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div class="modal fade" id="contactModal" tabindex="-1" aria-labelledby="contactModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content custom-modal-content">
+      <div class="modal-header custom-modal-header">
+        <h5 class="modal-title fw-bold" id="contactModalLabel">Contact Landlord</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body custom-modal-body">
+        <div class="modal-email-icon">📧</div>
+        <h5 class="modal-main-text">Get in touch with {{ property.landlord.first_name|default:property.landlord.username }}</h5>
+        <p class="modal-sub-text">You can reach the landlord directly via email for any inquiries or to arrange a viewing.</p>
+        <div class="modal-email-display">
+            {{ property.landlord.email }}
+        </div>
+      </div>
+      <div class="modal-footer custom-modal-footer">
+        <a href="mailto:{{ property.landlord.email }}?subject=Inquiry about {{ property.title }}" class="send-email-btn">
+            Send Email Now
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="{% static 'js/main.js' %}"></script>
+
+{% endblock %}

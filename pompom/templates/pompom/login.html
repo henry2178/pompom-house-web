@@ -1,0 +1,47 @@
+{% extends 'pompom/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="auth-page-wrapper">
+    <div class="auth-form-container">
+        <div class="login-popup-card">
+
+            <a href="{% url 'home' %}" class="close-auth-btn" title="Back to Home">✖</a>
+
+            <div class="auth-header-text">
+                <h2 class="auth-popup-title">Welcome Back</h2>
+                <p class="auth-subtitle">Log in to Pompom House.</p>
+            </div>
+
+            <form method="post" class="student-login-form">
+                {% csrf_token %}
+
+                {% if form.non_field_errors %}
+                    <div class="auth-error-msg">
+                        Username or password incorrect.
+                    </div>
+                {% endif %}
+
+                {% for field in form %}
+                    <div class="form-input-group">
+                        <label class="auth-input-label">{{ field.label }}</label>
+                        {{ field }}
+                    </div>
+                {% endfor %}
+
+                <button type="submit" class="submit-login-btn">
+                    Log In
+                </button>
+            </form>
+
+            <div class="auth-footer-links">
+                <span class="auth-footer-text">Don't have an account?</span>
+                <a href="{% url 'register' %}" class="auth-signup-link">
+                    Sign Up Now
+                </a>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

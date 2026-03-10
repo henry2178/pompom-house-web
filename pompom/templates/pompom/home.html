@@ -1,0 +1,68 @@
+{% extends 'pompom/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="home-page-container">
+
+    <div class="home-banner" style="background: linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)), url('{% static 'pompom/homePagePhoto.png' %}') no-repeat center center / cover;">
+
+        <form method="GET" action="{% url 'home' %}" class="search-box-container">
+            <span class="search-icon">🔍</span>
+            <input type="text" name="q" value="{{ query }}" placeholder="Search Property or Landlord from GLASGOW" class="search-input">
+            <button type="submit" class="submit-search-btn">Search</button>
+        </form>
+    </div>
+
+    <div class="results-header">
+        <h3 class="results-title">{{ total_count }} Properties Available</h3>
+    </div>
+
+    <div class="property-list-grid">
+
+        {% for prop in page_obj %}
+        <div class="single-property-card">
+
+            {% if prop.photo %}
+                <img src="{{ prop.photo.url }}" class="property-cover-img" alt="{{ prop.title }}">
+            {% else %}
+                <img src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?q=80&w=1000&auto=format&fit=crop" class="property-cover-img" alt="Default">
+            {% endif %}
+
+            <div class="property-card-content">
+                <h5 class="prop-name">{{ prop.title }}</h5>
+                <p class="prop-address">📍 {{ prop.address }}</p>
+
+                <div class="prop-amenities">
+                    <span>🛏️ {{ prop.bed_type }}</span>
+                    <span>🛁 {{ prop.bathroom_type }}</span>
+                </div>
+
+                <div class="prop-rating">
+                    ⭐ {{ prop.rating }} <span class="review-count">({{ prop.review_count }} reviews)</span>
+                </div>
+
+                <div class="prop-price">£{{ prop.price }}<span class="per-week">/week</span></div>
+
+                <a href="{% url 'property_detail' prop.id %}" class="view-detail-btn">View Details</a>
+            </div>
+        </div>
+        {% empty %}
+        <div class="empty-results">
+            <h5>No properties found!</h5>
+        </div>
+        {% endfor %}
+
+    </div>
+
+    <div class="page-nav-wrapper">
+        {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}" class="page-btn prev-btn">&lt; Previous</a>
+        {% endif %}
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}" class="page-btn next-btn">Next &gt;</a>
+        {% endif %}
+    </div>
+
+</div>
+{% endblock %}

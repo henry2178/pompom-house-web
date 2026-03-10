@@ -1,0 +1,197 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pompom House - Student Rentals</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body class="pompom-main-body">
+
+<nav class="navbar navbar-expand-lg top-header-bar">
+  <div class="container">
+
+    <div class="logo-area">
+        <a class="logo-link" href="{% url 'home' %}">
+             <img src="{% static 'pompom/pompomdog.png' %}" alt="Pompom House Logo" class="dog-logo">
+             Pompom House
+        </a>
+        <button class="city-badge-btn" type="button">
+            📍 Glasgow
+        </button>
+    </div>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainMenuLinks">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="mainMenuLinks">
+      <ul class="navbar-nav ms-auto right-nav-buttons">
+
+        {% if user.is_authenticated %}
+            <div class="dropdown my-account-area">
+                <a class="dropdown-toggle user-name-link" href="#" role="button" id="studentAccountMenu" data-bs-toggle="dropdown" aria-expanded="false">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#4c3d72" class="bi bi-person-fill head-icon" viewBox="0 0 16 16">
+                        <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3Zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/>
+                    </svg>
+                    {{ user.first_name|default:user.username }}
+                </a>
+
+                <ul class="dropdown-menu dropdown-menu-end action-list-box" aria-labelledby="studentAccountMenu">
+                    {% if user.is_landlord %}
+                        <li>
+                            <a class="dropdown-item list-link landlord-link" href="{% url 'landlord_dashboard' %}">
+                                <span class="emoji-icon">📊</span> Landlord Dashboard
+                            </a>
+                        </li>
+                        <li><hr class="dropdown-divider line-break"></li>
+                    {% endif %}
+
+                    <li>
+                        <a class="dropdown-item list-link" href="{% url 'my_bookings' %}">
+                            <span class="emoji-icon">📅</span> My Bookings
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item list-link" href="{% url 'my_favorites' %}">
+                            <span class="emoji-icon">❤️</span> Favorites
+                        </a>
+                    </li>
+                    <li><hr class="dropdown-divider line-break"></li>
+                    <li>
+                        <a class="dropdown-item list-link" href="#" data-bs-toggle="modal" data-bs-target="#myProfileWindow">
+                            <span class="emoji-icon">👤</span> Personal Information
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <li class="nav-item">
+              <form action="{% url 'logout' %}" method="post" class="exit-form">
+                  {% csrf_token %}
+                  <button type="submit" class="orange-submit-btn">
+                        Logout
+                  </button>
+              </form>
+            </li>
+        {% else %}
+            <li class="nav-item">
+                <a class="simple-login-text" href="{% url 'login' %}">👤 Login</a>
+            </li>
+            <li class="nav-item">
+                <a class="orange-submit-btn signup-spacing" href="{% url 'register' %}">
+                    Sign Up Now
+                </a>
+            </li>
+        {% endif %}
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="container page-content-area">
+    {% block content %}
+    {% endblock %}
+</div>
+
+<div class="modal fade" id="myProfileWindow" tabindex="-1" aria-labelledby="myProfileWindowTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content popup-window-box">
+
+      <div class="modal-header popup-top-bar">
+        <h5 class="modal-title popup-title-text" id="myProfileWindowTitle">👤 Personal Information</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body p-0">
+        <div class="list-group list-group-flush popup-data-list">
+
+            <div class="list-group-item single-data-row">
+                <div class="data-show-part">
+                    <div>
+                        <div class="data-label">Full Name</div>
+                        <div class="data-value">{{ user.first_name }} {{ user.last_name }}</div>
+                    </div>
+                    <button class="edit-text-btn" data-bs-toggle="collapse" data-bs-target="#changeNameForm">Change</button>
+                </div>
+                <div class="collapse hidden-edit-area" id="changeNameForm">
+                    <form action="{% url 'update_info' %}" method="POST" class="inline-update-form">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="update_name">
+                        <input type="text" name="first_name" class="form-control" value="{{ user.first_name }}" placeholder="First Name" required>
+                        <input type="text" name="last_name" class="form-control" value="{{ user.last_name }}" placeholder="Last Name" required>
+                        <button type="submit" class="save-change-btn">Save</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="list-group-item single-data-row">
+                <div class="data-show-part">
+                    <div>
+                        <div class="data-label">Email Address</div>
+                        <div class="data-value">{{ user.email }}</div>
+                    </div>
+                    <button class="edit-text-btn" data-bs-toggle="collapse" data-bs-target="#changeEmailForm">Change</button>
+                </div>
+                <div class="collapse hidden-edit-area" id="changeEmailForm">
+                    <form action="{% url 'update_info' %}" method="POST" class="inline-update-form">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="update_email">
+                        <input type="email" name="email" class="form-control" value="{{ user.email }}" placeholder="New Email" required>
+                        <button type="submit" class="save-change-btn">Save</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="list-group-item single-data-row">
+                <div class="data-show-part">
+                    <div>
+                        <div class="data-label">Phone Number</div>
+                        <div class="data-value">{{ user.phone|default:"Not provided yet" }}</div>
+                    </div>
+                    <button class="edit-text-btn" data-bs-toggle="collapse" data-bs-target="#changePhoneForm">Change</button>
+                </div>
+                <div class="collapse hidden-edit-area" id="changePhoneForm">
+                    <form action="{% url 'update_info' %}" method="POST" class="inline-update-form">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="update_phone">
+                        <input type="text" name="phone" class="form-control" value="{{ user.phone|default:'' }}" placeholder="Enter phone number" required>
+                        <button type="submit" class="save-change-btn">Save</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="list-group-item single-data-row">
+                <div class="data-show-part">
+                    <div>
+                        <div class="data-label">Password</div>
+                        <div class="data-value">••••••••</div>
+                    </div>
+                    <button class="edit-text-btn" data-bs-toggle="collapse" data-bs-target="#changePasswordForm">Change</button>
+                </div>
+                <div class="collapse hidden-edit-area" id="changePasswordForm">
+                    <form action="{% url 'update_info' %}" method="POST" class="password-update-box">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="update_password">
+                        <input type="password" name="new_password" class="form-control mb-2" placeholder="New Password" required>
+                        <input type="password" name="confirm_password" class="form-control mb-3" placeholder="Confirm New Password" required>
+                        <div class="password-btn-right">
+                            <button type="submit" class="save-change-btn px-4">Update Password</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

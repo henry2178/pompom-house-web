@@ -1,0 +1,90 @@
+{% extends 'pompom/base.html' %}
+{% block content %}
+<div class="property-page-wrapper">
+    <div class="form-center-wrapper">
+
+        <div class="add-property-header">
+            <a href="{% url 'landlord_dashboard' %}" class="back-circle-btn">&larr;</a>
+            <h2 class="add-property-title">List a New Property</h2>
+        </div>
+
+        <div class="add-property-card">
+            <div class="add-property-card-body">
+
+                <form action="{% url 'add_property' %}" method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+
+                    <h5 class="section-title">1. Basic Information</h5>
+
+                    <div class="form-item">
+                        <label class="custom-label">Property Name *</label>
+                        <input type="text" name="title" class="custom-input" placeholder="" required>
+                    </div>
+
+                    <div class="form-item">
+                        <label class="custom-label">Address *</label>
+                        <input type="text" name="address" class="custom-input" placeholder="" required>
+                    </div>
+
+                    <div class="form-split-row">
+                        <div class="form-half-col">
+                            <label class="custom-label">Price Per Week (£) *</label>
+                            <input type="number" name="price" class="custom-input" placeholder="" required min="1" step="0.01">
+                        </div>
+                        <div class="form-half-col">
+                            <label class="custom-label">Property Photo</label>
+                            <input type="file" name="photo" class="custom-input" accept="image/*">
+                        </div>
+                    </div>
+
+                    <h5 class="section-title">2. Property Details</h5>
+
+                    <div class="form-split-row">
+                        <div class="form-half-col">
+                            <label class="custom-label">Bed Type</label>
+                            <select name="bed_type" class="custom-input">
+                                <option value="Small Single Bed">Small Single Bed</option>
+                                <option value="Standard Single Bed">Standard Single Bed</option>
+                                <option value="Double Bed" selected>Double Bed</option>
+                                <option value="King Bed">King Bed</option>
+                                <option value="Superking Bed">Superking Bed</option>
+                            </select>
+                        </div>
+                        <div class="form-half-col">
+                            <label class="custom-label">Bathroom Type</label>
+                            <select name="bathroom_type" class="custom-input">
+                                <option value="Studio">Studio (Private bathroom)</option>
+                                <option value="En-suite" selected>En-suite (Private bathroom)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-split-row">
+                        <div class="form-half-col">
+                            <label class="custom-label">Rating Score (0 to 5.0) *</label>
+                            <input type="number" name="rating" class="custom-input" placeholder="e.g. 4.8" min="0" max="5" step="0.1" required value="5.0">
+                        </div>
+                        <div class="form-half-col">
+                            <label class="custom-label">Number of Reviews *</label>
+                            <input type="number" name="review_count" class="custom-input" placeholder="e.g. 12" min="0" required value="0">
+                        </div>
+                    </div>
+
+                    <div class="form-item-last">
+                        <label class="custom-label">Description</label>
+                        <textarea name="description" class="custom-input" rows="5" placeholder="Tell students about the amazing features of this property..." required></textarea>
+                    </div>
+
+                    <div class="form-actions">
+                        <a href="{% url 'landlord_dashboard' %}" class="cancel-btn">Cancel</a>
+                        <button type="submit" class="publish-btn">
+                            Publish Listing
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

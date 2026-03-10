@@ -1,0 +1,62 @@
+{% extends 'pompom/base.html' %}
+{% block content %}
+<div class="my-bookings-page">
+    <h2 class="page-main-title">📅 My Bookings</h2>
+
+    <div class="bookings-list-container">
+        {% for booking in bookings %}
+        <div class="booking-history-card">
+            <div class="booking-card-inner">
+
+                <div class="booking-info-left">
+                    <h4 class="b-prop-title">{{ booking.property.title }}</h4>
+                    <p class="b-prop-address">📍 {{ booking.property.address }}</p>
+
+                    <div class="b-meta-info">
+                        <span class="meta-item"><strong>⏱️ Duration:</strong> <span>{{ booking.weeks }} Weeks</span></span>
+                        <span class="meta-item"><strong>💰 Total:</strong> <span>£{{ booking.total_price }}</span></span>
+                    </div>
+                </div>
+
+                <div class="booking-status-right">
+                    {% if booking.status == 'Pending' %}
+                        <span class="custom-status-badge badge-pending-color">⏳ Pending</span>
+                    {% elif booking.status == 'Approved' %}
+                        <span class="custom-status-badge badge-approved-color">✅ Approved</span>
+
+                        <form action="{% url 'pay_booking' booking.id %}" method="POST" class="pay-form">
+                            {% csrf_token %}
+                            <button type="submit" class="stripe-pay-btn">
+                                💳 Pay Now with Stripe
+                            </button>
+                        </form>
+                    {% elif booking.status == 'Rejected' %}
+                        <span class="custom-status-badge badge-rejected-color">❌ Rejected</span>
+                    {% else %}
+                        <span class="custom-status-badge badge-cancelled-color">🚫 Cancelled</span>
+                    {% endif %}
+
+                    <div class="booking-date-text">Requested on: <span>{{ booking.created_time|date:"Y-m-d" }}</span></div>
+
+                    {% if booking.status == 'Pending' %}
+                        <form action="{% url 'cancel_booking' booking.id %}" method="POST" class="cancel-form">
+                            {% csrf_token %}
+                            <button type="submit" class="cancel-booking-btn" onclick="return confirm('Are you sure you want to cancel this booking? This action cannot be undone.');">
+                                Cancel Booking
+                            </button>
+                        </form>
+                    {% endif %}
+                </div>
+
+            </div>
+        </div>
+        {% empty %}
+        <div class="empty-bookings-box">
+            <div class="empty-mailbox-icon">📭</div>
+            <h4 class="empty-message-text">You haven't made any bookings yet.</h4>
+            <a href="{% url 'home' %}" class="explore-props-btn">Explore Properties</a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,53 @@
+{% extends 'pompom/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="auth-page-wrapper">
+    <div class="auth-form-container">
+        <div class="login-popup-card">
+
+            <a href="{% url 'home' %}" class="close-auth-btn" title="Back to Home">✖</a>
+
+            <div class="auth-header-text">
+                <h2 class="auth-popup-title">Join Pompom</h2>
+                <p class="auth-subtitle register-subtitle">Register with your <b>.ac.uk</b> email.</p>
+            </div>
+
+            <form method="post" class="student-login-form register-special-form">
+                {% csrf_token %}
+
+                {% if form.non_field_errors %}
+                    <div class="auth-error-msg form-error-compact">
+                        {{ form.non_field_errors }}
+                    </div>
+                {% endif %}
+
+                {% for field in form %}
+                    <div class="form-input-group compact-input-group">
+                        <label class="auth-input-label">{{ field.label }}</label>
+                        {{ field }}
+
+                        {% if field.errors %}
+                            <div class="field-error-text">
+                                {{ field.errors|striptags }}
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+
+                <button type="submit" class="submit-login-btn register-btn-margin">
+                    Create Account
+                </button>
+            </form>
+
+            <div class="auth-footer-links">
+                <span class="auth-footer-text">Already have an account?</span>
+                <a href="{% url 'login' %}" class="auth-signup-link" style="font-size: 0.85rem;">
+                    Log In
+                </a>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

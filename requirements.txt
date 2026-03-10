@@ -1,0 +1,14 @@
+asgiref @ file:///C:/miniconda3/conda-bld/asgiref_1760342224374/work
+certifi==2026.2.25
+charset-normalizer==3.4.4
+Django @ file:///C:/miniconda3/conda-bld/django_1764329327954/work
+gunicorn==25.1.0
+idna==3.11
+packaging @ file:///C:/miniconda3/conda-bld/packaging_1761049101700/work
+pillow==12.1.1
+requests==2.32.5
+sqlparse @ file:///C:/miniconda3/conda-bld/sqlparse_1764240088308/work
+stripe==14.4.0
+typing_extensions @ file:///C:/b/abs_ecq8gc0vbm/croot/typing_extensions_1756281142218/work
+urllib3==2.6.3
+whitenoise==6.12.0

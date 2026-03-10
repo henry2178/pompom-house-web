@@ -1,0 +1,96 @@
+{% extends 'pompom/base.html' %} 
+{% block content %}
+<div class="property-page-wrapper">
+    <div class="form-center-wrapper">
+
+        <div class="add-property-header">
+            <a href="{% url 'landlord_dashboard' %}" class="back-circle-btn">&larr;</a>
+            <h2 class="add-property-title">✏️ Edit Property</h2>
+        </div>
+
+        <div class="add-property-card">
+            <div class="add-property-card-body">
+
+                <form action="{% url 'edit_property' property.id %}" method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+
+                    <h5 class="section-title">1. Basic Information</h5>
+
+                    <div class="form-item">
+                        <label class="custom-label">Property Name / Title *</label>
+                        <input type="text" name="title" class="custom-input" value="{{ property.title }}" required>
+                    </div>
+
+                    <div class="form-item">
+                        <label class="custom-label">Full Address *</label>
+                        <input type="text" name="address" class="custom-input" value="{{ property.address }}" required>
+                    </div>
+
+                    <div class="form-split-row">
+                        <div class="form-half-col">
+                            <label class="custom-label">Price Per Week (£) *</label>
+                            <input type="number" name="price" class="custom-input" value="{{ property.price }}" required min="1" step="0.01">
+                        </div>
+                        <div class="form-half-col">
+                            <label class="custom-label">Property Photo</label>
+
+                            {% if property.photo %}
+                                <span class="current-photo-status">Current: <a href="{{ property.photo.url }}" target="_blank" class="view-photo-link">View Image</a></span>
+                            {% endif %}
+
+                            <input type="file" name="photo" class="custom-input" accept="image/*">
+                            <span class="photo-help-text">Leave blank if you don't want to change the photo.</span>
+                        </div>
+                    </div>
+
+                    <h5 class="section-title">2. Property Details</h5>
+
+                    <div class="form-split-row">
+                        <div class="form-half-col">
+                            <label class="custom-label">Bed Type</label>
+                            <select name="bed_type" class="custom-input">
+                                <option value="Small Single Bed" {% if property.bed_type == 'Small Single Bed' %}selected{% endif %}>Small Single Bed</option>
+                                <option value="Standard Single Bed" {% if property.bed_type == 'Standard Single Bed' %}selected{% endif %}>Standard Single Bed</option>
+                                <option value="Double Bed" {% if property.bed_type == 'Double Bed' %}selected{% endif %}>Double Bed</option>
+                                <option value="King Bed" {% if property.bed_type == 'King Bed' %}selected{% endif %}>King Bed</option>
+                                <option value="Superking Bed" {% if property.bed_type == 'Superking Bed' %}selected{% endif %}>Superking Bed</option>
+                            </select>
+                        </div>
+                        <div class="form-half-col">
+                            <label class="custom-label">Bathroom Type</label>
+                            <select name="bathroom_type" class="custom-input">
+                                <option value="Studio" {% if property.bathroom_type == 'Studio' %}selected{% endif %}>Studio (Private bathroom)</option>
+                                <option value="En-suite" {% if property.bathroom_type == 'En-suite' %}selected{% endif %}>En-suite (Private bathroom)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-split-row">
+                        <div class="form-half-col">
+                            <label class="custom-label">Rating Score (0 to 5.0) *</label>
+                            <input type="number" name="rating" class="custom-input" value="{{ property.rating }}" min="0" max="5" step="0.1" required>
+                        </div>
+                        <div class="form-half-col">
+                            <label class="custom-label">Number of Reviews *</label>
+                            <input type="number" name="review_count" class="custom-input" value="{{ property.review_count }}" min="0" required>
+                        </div>
+                    </div>
+
+                    <div class="form-item-last">
+                        <label class="custom-label">Description</label>
+                        <textarea name="description" class="custom-input" rows="5" required>{{ property.description }}</textarea>
+                    </div>
+
+                    <div class="form-actions">
+                        <a href="{% url 'landlord_dashboard' %}" class="cancel-btn">Cancel</a>
+                        <button type="submit" class="save-blue-btn">
+                            Save Changes
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
