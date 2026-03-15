@@ -1,11 +1,47 @@
-# Testing Instructions
-### To run the automated unit tests for this application, Please execute the following command:
-`python manage.py test`
+# Pompom House
 
+PomPom House is a student accommodation platform designed to connect landlords with international students. It provides a responsive and secure booking experience.
 
-# What I tested in tests.py?
-1. I wrote a test to check if the Property model works properly. It makes sure that when a new property is created, it successfully links to the correct Landlord user in the database.
+## Core Features
 
-2. I tested the home page to make sure it actually loads without crashing (returns an HTTP 200 status) and successfully displays the property data from the database.
+* **Custom Email Authentication:** Bypasses default Django username login, allowing users to register and log in securely using their university `.ac.uk` email addresses.
+* **Interactive Booking Workflow:** Uses AJAX to handle asynchronous booking requests (approve/reject/cancel) without requiring full page reloads.
+* **Property Mapping:** Integrates the Google Maps JavaScript API with lazy loading to dynamically plot exact property locations.
+* **Secure Sandbox Payments:** Incorporates the Stripe API to handle deposit payments externally, ensuring sensitive financial data is never stored on the local server.
+* **Production-Ready & Accessible:** Built with a fully responsive pure CSS Flexbox/Grid layout (no Bootstrap). Deployed using Gunicorn and WhiteNoise for static asset optimization, and strictly adheres to WCAG 2.2 accessibility standards.
 
-3. I wanted to make sure regular users can't just type the URL to see the landlord dashboard. This test pretends to be a logged-out user and checks if the system correctly blocks them and redirects them to the login page (HTTP 302).
+## Project Technology
+
+* **Backend:** Python, Django 
+* **Frontend:** HTML5, CSS3 (Flexbox/Grid), JavaScript, AJAX
+* **External APIs:** Stripe Checkout API, Google Maps API
+* **Deployment & Testing:** Gunicorn, WhiteNoise, Django `TestCase`
+
+## Instructions
+
+Follow these steps to run the PomPom House project on your local machine.
+
+### 1. Prerequisites
+Ensure you have Python 3.10 installed on your system.
+
+### 2. Install Dependencies
+```bash
+pip install -r requirements.txt
+```
+
+### 3. Database Setup
+```bash
+python manage.py makemigrations
+python manage.py migrate
+```
+
+### 4. Run the Application
+```bash
+python manage.py runserver
+```
+
+### 5. Running Tests
+The project includes an automated test suite covering database models, view rendering, and access control. To run the tests, execute:
+```bash
+python manage.py test
+```
